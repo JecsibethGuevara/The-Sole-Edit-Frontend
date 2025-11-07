@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { ProductFormData } from "@/types/productDetails";
+import { alerts } from "@/components/shared/alerts";
 import { useProduct } from "@/hooks/useProduct";
 import { useStores } from "@/hooks/useStores";
 
@@ -26,6 +27,7 @@ export default function CreateProductPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{ type: string; text: string; title: string } | null>(null);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -43,14 +45,17 @@ export default function CreateProductPage() {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
-      setTimeout(() => {
+      try {
+        await createProduct({ ...formData });
+        setAlert({ type: "success", text: "Product created successfully!", title: "Success" });
+      } catch (err) {
+        setAlert({ type: "danger", text: "Error creating product", title: "Error" });
+        console.error("Error creating product:", err);
+      } finally {
         setIsLoading(false);
-        try {
-          createProduct(formData);
-        } catch (err) {
-          console.error("Error creating product:", err);
-        }
-      }, 1000);
+      }
+    } else {
+      console.log("validation errror");
     }
   };
 
@@ -72,6 +77,7 @@ export default function CreateProductPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {alert && alerts({ type: alert.type, text: alert.text, title: alert.title })}
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -137,13 +143,24 @@ export default function CreateProductPage() {
                     <select
                       id="brand"
                       value={formData.brand}
-                      onChange={(e) =>
-                        setFormData({ ...formData, brand: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const foundStore = stores.find(
+                          (store) => store.name === e.target.value
+                        );
+                        console.log(foundStore, e.target.value, formData.brand);
+                        setFormData({
+                          ...formData,
+                          brand: e.target.value,
+                          store_id: foundStore?.id,
+                        });
+                      }}
                       className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
+                      <option key={0} value={""}>
+                        Select an Option
+                      </option>
                       {stores.map((store) => (
-                        <option key={store.id} value={store.id}>
+                        <option key={store.id} value={store.name}>
                           {store.name}
                         </option>
                       ))}

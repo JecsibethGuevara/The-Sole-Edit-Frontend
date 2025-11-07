@@ -5,23 +5,9 @@ import { BarChart3, Users, Package, Store } from "lucide-react";
 import { Header } from "../shared/Header";
 import { useRouter } from "next/navigation";
 import StatsButtons from "./StatsButtons";
-import { useStores } from "@/hooks/useStores";
-import { useProduct } from "@/hooks/useProduct";
-import { StoreFormData } from "@/types/store.interfaces";
-import { ProductFormData } from "@/types/productDetails";
 
 export const Admin = () => {
   const router = useRouter();
-  const { stores, createStore } = useStores();
-  const { createProduct } = useProduct();
-
-  const handleSaveProduct = (product: ProductFormData) => {
-    createProduct(product);
-  };
-
-  const handleSaveStore = (store: StoreFormData) => {
-    createStore(store);
-  };
 
   const stats = [
     {
@@ -42,7 +28,7 @@ export const Admin = () => {
       label: "Total Users",
       value: "3,542",
       icon: Users,
-      href: "/admin/users",
+      href: "/admin",
       color: "bg-purple-500/10 text-purple-600",
     },
     {
@@ -71,7 +57,10 @@ export const Admin = () => {
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button onClick={() => router.push("/admin/products/create")} className="w-full">
+            <Button
+              onClick={() => router.push("/admin/products/create")}
+              className="w-full"
+            >
               Add New Product
             </Button>
             <Button

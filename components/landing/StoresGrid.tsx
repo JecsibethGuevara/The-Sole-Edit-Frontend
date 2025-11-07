@@ -14,10 +14,19 @@ import Link from "next/link";
 import { Paginations, Store } from "@/types/store.interfaces";
 import Image from "next/image";
 
-type StoresGridProps = { stores: Store[]; pagination?: Paginations };
+type StoresGridProps = {
+  stores: Store[];
+  pagination?: Paginations;
+  goToNextPage: () => void;
+  goToPrevPage: () => void;
+};
 
-export const StoresGrid = ({ stores, pagination }: StoresGridProps) => {
-  console.log(pagination);
+export const StoresGrid = ({
+  stores,
+  pagination,
+  goToNextPage,
+  goToPrevPage,
+}: StoresGridProps) => {
   return (
     <section id="stores" className="py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,9 +84,7 @@ export const StoresGrid = ({ stores, pagination }: StoresGridProps) => {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  href={pagination?.hasPrev ? pagination?.prevPageUrl : ""}
-                />
+                <PaginationPrevious onClick={goToPrevPage} />
               </PaginationItem>
               <PaginationItem>
                 <PaginationLink href="#" isActive>
@@ -85,7 +92,7 @@ export const StoresGrid = ({ stores, pagination }: StoresGridProps) => {
                 </PaginationLink>
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext href={pagination?.nextPageUrl} />
+                <PaginationNext onClick={goToNextPage} />
               </PaginationItem>
             </PaginationContent>
           </Pagination>

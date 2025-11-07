@@ -6,6 +6,7 @@ import { StoreAdminFilters } from "./StoreAdminFilters";
 import { StoreCard } from "./StoreCard";
 import { useStores } from "@/hooks/useStores";
 import { Category } from "@/components/stores/CategoryFilter";
+import { alerts } from "@/components/shared/alerts";
 import {
   Pagination,
   PaginationContent,
@@ -21,6 +22,7 @@ export default function StoresAdmin() {
     value: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [alert, setAlert] = useState<{ type: string; text: string; title: string } | null>(null);
 
   const { stores, searchStores, pagination, deleteStore } = useStores();
 
@@ -34,8 +36,13 @@ export default function StoresAdmin() {
     }
   }, [searchQuery, filterStatus, searchStores]);
 
-  const handleDelete = (id: number) => {
-    deleteStore(id);
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteStore(id);
+      setAlert({ type: "success", text: "Store deleted successfully!", title: "Success" });
+    } catch (error) {
+      setAlert({ type: "danger", text: "Error deleting store", title: "Error" });
+    }
   };
 
   return (
@@ -43,6 +50,7 @@ export default function StoresAdmin() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {alert && alerts({ type: alert.type, text: alert.text, title: alert.title })}
         <StoreAdminFilters
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}

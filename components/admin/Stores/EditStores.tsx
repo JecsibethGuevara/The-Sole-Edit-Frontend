@@ -12,6 +12,7 @@ import Link from "next/link";
 import { StoreFormData } from "@/types/store.interfaces";
 import { useStores } from "@/hooks/useStores";
 import { useParams } from "next/navigation";
+import { alerts } from "@/components/shared/alerts";
 import { useStore } from "@/hooks/useStore";
 
 export default function EditStorePage() {
@@ -29,6 +30,7 @@ export default function EditStorePage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{ type: string; text: string; title: string } | null>(null);
 
   useEffect(() => {
     if (store) {
@@ -58,10 +60,14 @@ export default function EditStorePage() {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
-      setTimeout(() => {
+      try {
+        await updateStore(storeId, formData);
+        setAlert({ type: "success", text: "Store updated successfully!", title: "Success" });
+      } catch (error) {
+        setAlert({ type: "danger", text: "Error updating store", title: "Error" });
+      } finally {
         setIsLoading(false);
-        updateStore(storeId, formData);
-      }, 1000);
+      }
     }
   };
 
@@ -104,6 +110,7 @@ export default function EditStorePage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {alert && alerts({ type: alert.type, text: alert.text, title: alert.title })}
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

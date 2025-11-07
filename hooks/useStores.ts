@@ -5,38 +5,50 @@ import { storesApi } from '@/lib/stores';
 import { Pagination, Store, StoreFormData, StoresResponse } from '@/types/store.interfaces';
 import { useState, useEffect, useCallback } from 'react';
 
-export const useStores = () => {
+interface UseStoresProps {
+    initialPage?: number;
+    initialLimit?: number;
+}
+
+
+export const useStores = ({ initialPage = 0, initialLimit = 10 }: UseStoresProps = {}) => {
     const [stores, setStores] = useState<Store[]>([]);
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [pagination, setPagination] = useState<Pagination>();
+    const [currentPage, setCurrentPage] = useState(0);
+
 
     // Fetch all stores
-    useEffect(() => {
-        const fetchStores = async () => {
-            try {
-                setIsLoading(true);
-                const response = await storesApi.getStores();
-                setStores(response.data);
-                setPagination({
-                    page: response.meta.page,
-                    limit: response.meta.limit,
-                    total: response.meta.total,
-                    hasNext: response.meta.hasNext,
-                    hasPrev: response.meta.hasPrev,
-                    nextPageUrl: response.meta.nextPageUrl,
-                    prevPageUrl: response.meta.prevPageUrl,
-                });
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to fetch stores');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchStores();
+    const fetchStores = useCallback(async (page: number = currentPage) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const response = await storesApi.getStores(page);
+            setStores(response.data);
+            setPagination({
+                page: response.meta.page,
+                limit: response.meta.limit,
+                total: response.meta.total,
+                hasNext: response.meta.hasNext,
+                hasPrev: response.meta.hasPrev,
+                nextPageUrl: response.meta.nextPageUrl,
+                prevPageUrl: response.meta.prevPageUrl,
+            });
+            setCurrentPage(response.meta.page);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch stores');
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+        fetchStores(1);
+    }, [initialPage, initialLimit]);
+
 
 
     const searchStores = useCallback(async (search: string, isActive?: Category) => {
@@ -103,8 +115,6 @@ export const useStores = () => {
 
     };
 
-
-
     const deleteStore = async (storeId: number) => {
 
         try {
@@ -128,6 +138,27 @@ export const useStores = () => {
 
     };
 
+    const goToPage = useCallback((page: number) => {
+        if (page > 0 && pagination && page <= Math.ceil(pagination.total / 10)) {
+            fetchStores(page);
+        }
+    }, [fetchStores, pagination]);
+
+    const goToNextPage = useCallback(() => {
+        console.log('gere')
+        if (pagination?.hasNext) {
+            fetchStores(currentPage + 1);
+        }
+    }, [fetchStores, pagination, currentPage]);
+
+    const goToPrevPage = useCallback(() => {
+        if (pagination?.hasPrev) {
+            fetchStores(currentPage - 1);
+        }
+    }, [fetchStores, pagination, currentPage]);
+
+
+
     return {
         stores,
         selectedStore,
@@ -139,6 +170,9 @@ export const useStores = () => {
         updateStore,
         deleteStore,
         clearSelectedStore,
+        goToPage,
+        goToNextPage,
+        goToPrevPage,
         refetch: () => {
             setIsLoading(true);
             storesApi.getStores()

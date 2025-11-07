@@ -68,8 +68,10 @@ export interface ProductResponse {
     timestamp: string;
 }
 
+
+
 export interface ProductFormData {
-    store_id: number;
+    store_id: number | undefined;
     name: string;
     description: string;
     category: string;
@@ -78,3 +80,10 @@ export interface ProductFormData {
     price: number;
     stock: number;
 }
+export interface UpdateProductFormData {
+    store_id: number | undefined;
+    price: number;
+    stock: number;
+}
+
+

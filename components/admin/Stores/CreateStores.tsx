@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { StoreFormData } from "@/types/store.interfaces";
+import { alerts } from "@/components/shared/alerts";
 import { useStores } from "@/hooks/useStores";
 
 export default function CreateStorePage() {
@@ -22,6 +23,7 @@ export default function CreateStorePage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{ type: string; text: string; title: string } | null>(null);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -41,10 +43,14 @@ export default function CreateStorePage() {
     e.preventDefault();
     if (validateForm()) {
       setIsLoading(true);
-      setTimeout(() => {
+      try {
+        await createStore(formData);
+        setAlert({ type: "success", text: "Store created successfully!", title: "Success" });
+      } catch (error) {
+        setAlert({ type: "danger", text: "Error creating store", title: "Error" });
+      } finally {
         setIsLoading(false);
-        createStore(formData);
-      }, 1000);
+      }
     }
   };
 
@@ -66,6 +72,7 @@ export default function CreateStorePage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {alert && alerts({ type: alert.type, text: alert.text, title: alert.title })}
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

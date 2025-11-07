@@ -14,7 +14,7 @@ import Link from "next/link";
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { stores, searchStores, pagination, isLoading, error, refetch } =
+  const { stores, searchStores, pagination, goToNextPage, goToPrevPage } =
     useStores();
 
   useEffect(() => {
@@ -34,7 +34,12 @@ export default function LandingPage() {
       <Stats />
 
       <GlobalSearch query={setSearchQuery} text={searchQuery} />
-      <StoresGrid stores={stores} pagination={pagination} />
+      <StoresGrid
+        stores={stores}
+        pagination={pagination}
+        goToNextPage={goToNextPage}
+        goToPrevPage={goToPrevPage}
+      />
       <Marketing />
 
       <section className="bg-primary text-primary-foreground py-16 md:py-24">

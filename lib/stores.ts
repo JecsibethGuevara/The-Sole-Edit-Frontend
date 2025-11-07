@@ -5,10 +5,11 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 export const storesApi = {
-    getStores: async (): Promise<StoresResponse> => {
+    getStores: async (page?: number): Promise<StoresResponse> => {
         const token = localStorage.getItem('access_token');
 
-        const response = await fetch(`${API_BASE_URL}/stores`, {
+
+        const response = await fetch(`${API_BASE_URL}/stores${page ? `?page=${page}` : ''}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

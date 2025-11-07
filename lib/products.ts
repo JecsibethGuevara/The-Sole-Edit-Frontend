@@ -1,4 +1,4 @@
-import { Product, ProductFormData, ProductResponse, ProductsResponse } from "@/types/productDetails";
+import { Product, ProductFormData, ProductResponse, ProductsResponse, UpdateProductFormData } from "@/types/productDetails";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -115,16 +115,17 @@ export const productsApi = {
         return response.json();
     },
 
-    updateProduct: async (productId: number, productData: ProductFormData, store: number): Promise<ProductResponse> => {
+    updateProduct: async (productId: number, productData: UpdateProductFormData, store: number | undefined): Promise<ProductResponse> => {
         const token = localStorage.getItem('access_token');
-        console.log(productData)
+        const { store_id, ...dataToSend } = productData;
+        console.log(dataToSend)
         const response = await fetch(`${API_BASE_URL}/stores/${store}/products/${productId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify(productData),
+            body: JSON.stringify(dataToSend),
         });
         if (!response.ok) {
             throw new Error('Failed to update product');

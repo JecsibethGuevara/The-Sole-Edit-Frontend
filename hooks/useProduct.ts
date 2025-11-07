@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { productsApi } from '@/lib/products';
-import { ProductFormData, ProductResponse } from '@/types/productDetails';
+import { ProductFormData, ProductResponse, UpdateProductFormData } from '@/types/productDetails';
 
 export const useProduct = (productId?: number) => {
     const [product, setProduct] = useState<ProductResponse>();
@@ -65,7 +65,7 @@ export const useProduct = (productId?: number) => {
         }
     }, []);
 
-    const updateProduct = useCallback(async (productId: number, productData: ProductFormData, store: number) => {
+    const updateProduct = useCallback(async (productId: number, productData: UpdateProductFormData, store: number | undefined) => {
         try {
             setIsLoading(true);
             setError(null);
