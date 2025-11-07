@@ -52,5 +52,24 @@ export interface Pagination {
     nextPageUrl: string
     prevPageUrl: string
 }
+export interface Paginations {
+    page: number
+    limit: number
+    total: number
+    hasNext: boolean
+    hasPrev: boolean
+    nextPageUrl: string
+    prevPageUrl: string
+}
+
+export interface StoreFormData {
+    id?: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    description: string;
+}
+
 
 

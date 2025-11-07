@@ -1,9 +1,9 @@
-import { StoreDetails } from "@/components/stores/StoreDetails";
+import { Store } from "@/components/stores/Store";
 import React from "react";
 
 const Page = async ({ params }: { params: { id: string } }) => {
   const resolvedParams = await params;
-  return <StoreDetails params={resolvedParams} />;
+  return <Store params={resolvedParams} />;
 };
 
 export default Page;

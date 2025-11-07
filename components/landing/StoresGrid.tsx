@@ -1,14 +1,23 @@
 "use client";
 
-import React from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { useStores } from "@/hooks/useStores";
 import Link from "next/link";
+import { Paginations, Store } from "@/types/store.interfaces";
+import Image from "next/image";
 
-export const StoresGrid = () => {
-  const { stores, isLoading, error, refetch } = useStores();
+type StoresGridProps = { stores: Store[]; pagination?: Paginations };
 
+export const StoresGrid = ({ stores, pagination }: StoresGridProps) => {
+  console.log(pagination);
   return (
     <section id="stores" className="py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,6 +25,7 @@ export const StoresGrid = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Featured Stores
           </h2>
+
           <p className="text-muted-foreground text-lg">
             Browse our curated selection of top-rated stores
           </p>
@@ -28,9 +38,11 @@ export const StoresGrid = () => {
               className="overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
             >
               <div className="relative h-48 overflow-hidden bg-muted">
-                <img
+                <Image
                   src={store.image || "/placeholder.svg"}
                   alt={store.name}
+                  width={1000}
+                  height={1000}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
               </div>
@@ -58,6 +70,25 @@ export const StoresGrid = () => {
               </div>
             </Card>
           ))}
+        </div>
+        <div className="   w-full h-full p-5">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={pagination?.hasPrev ? pagination?.prevPageUrl : ""}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  {pagination?.page}
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href={pagination?.nextPageUrl} />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </section>
