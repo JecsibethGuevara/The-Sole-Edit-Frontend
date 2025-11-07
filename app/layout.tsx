@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +21,9 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en">
-      <body className={geistSans.className}>{children}</body>
+      <body className={geistSans.className}>
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 };

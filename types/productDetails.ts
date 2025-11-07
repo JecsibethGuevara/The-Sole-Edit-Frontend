@@ -86,4 +86,29 @@ export interface UpdateProductFormData {
     stock: number;
 }
 
+export interface OneProductRespose {
+    success: boolean;
+    id: number;
+    store_id: number,
+    name: string,
+    description: string,
+    category: string,
+    brand: string,
+    image_url: string,
+    is_active: boolean,
+    created_by: number,
+    createdAt: string,
+    updatedAt: string,
+    storeProducts: StoreProducts[],
+    message: string,
+    timestamp: string
+}
 
+export interface StoreProducts {
+    id: number,
+    price: number,
+    stock: number,
+    is_available: boolean,
+    createdAt: string,
+    updatedAt: string
+}
